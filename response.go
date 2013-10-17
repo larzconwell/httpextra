@@ -1,7 +1,6 @@
 package httpextra
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -35,7 +34,7 @@ func (res *Response) send(data interface{}, status int, ct *ContentType) {
 
 	if ct == nil {
 		res.RW.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(res.RW, "No response content type available")
+		res.RW.Write([]byte("No response content type available"))
 		return
 	}
 
@@ -47,5 +46,5 @@ func (res *Response) send(data interface{}, status int, ct *ContentType) {
 	}
 
 	res.RW.WriteHeader(status)
-	fmt.Fprint(res.RW, string(contents))
+	res.RW.Write(contents)
 }

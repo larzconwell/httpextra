@@ -3,9 +3,9 @@
 package httpextra
 
 import (
-	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -68,15 +68,10 @@ func (lh *LogHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	}
 	req.URL.RawQuery = query.Encode()
 
-	fmt.Fprintf(lh.Writer, "%s %s - [%s] \"%s %s %s\" %d %d\n",
-		req.RemoteAddr,
-		username,
-		accessTime.Format("02/Jan/2006:15:04:05 -0700"),
-		req.Method,
-		req.URL.String(),
-		req.Proto,
-		loggedWriter.Status,
-		loggedWriter.Length)
+	content := req.RemoteAddr + " " + username + " - " + "[" + accessTime.Format("02/Jan/2006:15:04:05 -0700") + "]" +
+		" \"" + req.Method + " " + req.URL.String() + " " + req.Proto + "\" " + strconv.Itoa(loggedWriter.Status) +
+		" " + strconv.Itoa(loggedWriter.Length) + "\n"
+	lh.Writer.Write([]byte(content))
 }
 
 // ContentTypeHandler is a http.Handler that ensures unsupported formats
